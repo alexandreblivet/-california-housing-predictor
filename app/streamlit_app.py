@@ -168,39 +168,38 @@ def show_home_page(df, predictor):
         fig = px.histogram(df, x='price', nbins=50, title="Distribution of Housing Prices in California")
         fig.update_layout(xaxis_title="Price ($)", yaxis_title="Count")
         st.plotly_chart(fig, use_container_width=True)
-
 def show_prediction_page(predictor, processor):
     """Display the price prediction interface."""
-    st.write("## 🔮 Predict Housing Price")
+    st.write("## 🔮 Predict California Housing Price")
 
     if predictor is None or processor is None:
         st.error("Models not loaded. Please ensure the model has been trained.")
         return
 
-    st.write("Enter the property details below to get a price prediction:")
+    st.write("Enter the district characteristics below to get a median housing price prediction:")
 
     # Create input form
     with st.form("prediction_form"):
         col1, col2 = st.columns(2)
 
         with col1:
-            st.write("### Basic Property Information")
-            square_feet = st.number_input("Square Feet", min_value=500, max_value=10000, value=2000, step=100)
-            bedrooms = st.selectbox("Bedrooms", options=[1, 2, 3, 4, 5, 6], index=2)
-            bathrooms = st.selectbox("Bathrooms", options=[1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0], index=3)
-            year_built = st.slider("Year Built", min_value=1950, max_value=2024, value=2010)
+            st.write("### Economic & Demographic Data")
+            median_income = st.slider("Median Income (tens of thousands)", min_value=0.5, max_value=15.0, value=5.0, step=0.1)
+            population = st.number_input("Population", min_value=100, max_value=50000, value=3000, step=100)
+            avg_occupancy = st.slider("Average Occupancy (people per household)", min_value=1.0, max_value=10.0, value=3.5, step=0.1)
 
         with col2:
-            st.write("### Location & Features")
-            neighborhood_score = st.slider("Neighborhood Score (1-10)", min_value=1.0, max_value=10.0, value=7.0, step=0.5)
-            neighborhood_type = st.selectbox("Neighborhood Type", options=['Urban', 'Suburban', 'Rural'], index=1)
-            property_type = st.selectbox("Property Type", options=['Single Family', 'Condo', 'Townhouse', 'Duplex'], index=0)
+            st.write("### Housing Characteristics")
+            house_age = st.slider("Median House Age (years)", min_value=1, max_value=52, value=10)
+            avg_rooms = st.slider("Average Rooms per House", min_value=2.0, max_value=15.0, value=6.0, step=0.1)
+            avg_bedrooms = st.slider("Average Bedrooms per House", min_value=0.5, max_value=5.0, value=1.2, step=0.1)
 
-            has_garage = st.checkbox("Has Garage", value=True)
-            has_garden = st.checkbox("Has Garden", value=True)
-
-            distance_to_school = st.slider("Distance to School (miles)", min_value=0.1, max_value=10.0, value=1.5, step=0.1)
-            distance_to_transport = st.slider("Distance to Public Transport (miles)", min_value=0.1, max_value=8.0, value=0.8, step=0.1)
+        st.write("### Location")
+        col3, col4 = st.columns(2)
+        with col3:
+            latitude = st.slider("Latitude", min_value=32.0, max_value=42.0, value=34.0, step=0.1)
+        with col4:
+            longitude = st.slider("Longitude", min_value=-125.0, max_value=-114.0, value=-118.0, step=0.1)
 
         # Submit button
         submitted = st.form_submit_button("Predict Price", type="primary")
@@ -208,17 +207,14 @@ def show_prediction_page(predictor, processor):
         if submitted:
             # Prepare input data
             input_data = {
-                'square_feet': square_feet,
-                'bedrooms': bedrooms,
-                'bathrooms': bathrooms,
-                'year_built': year_built,
-                'neighborhood_score': neighborhood_score,
-                'has_garage': int(has_garage),
-                'has_garden': int(has_garden),
-                'distance_to_school': distance_to_school,
-                'distance_to_transport': distance_to_transport,
-                'neighborhood_type': neighborhood_type,
-                'property_type': property_type
+                'median_income': median_income,
+                'house_age': house_age,
+                'avg_rooms': avg_rooms,
+                'avg_bedrooms': avg_bedrooms,
+                'population': population,
+                'avg_occupancy': avg_occupancy,
+                'latitude': latitude,
+                'longitude': longitude
             }
 
             try:
@@ -228,24 +224,38 @@ def show_prediction_page(predictor, processor):
                 # Display result
                 st.markdown(f"""
                 <div class="prediction-result">
-                    Predicted Price: ${predicted_price:,.2f}
+                    Predicted Median House Value: ${predicted_price:,.2f}
                 </div>
                 """, unsafe_allow_html=True)
 
                 # Additional insights
-                st.write("### Price Breakdown Insights")
+                st.write("### District Analysis")
 
-                # Calculate price per square foot
-                price_per_sqft = predicted_price / square_feet
-                st.write(f"**Price per Square Foot**: ${price_per_sqft:.2f}")
+                # Income-to-price ratio
+                price_income_ratio = predicted_price / (median_income * 10000)
+                st.write(f"**Price-to-Income Ratio**: {price_income_ratio:.1f}x")
+
+                # Room analysis
+                bedroom_ratio = avg_bedrooms / avg_rooms
+                st.write(f"**Bedroom Ratio**: {bedroom_ratio:.2f} ({bedroom_ratio*100:.0f}% of rooms are bedrooms)")
+
+                # Location analysis
+                is_coastal = longitude > -121.0
+                is_northern = latitude > 36.0
+
+                location_desc = "Northern" if is_northern else "Southern"
+                location_desc += " California, "
+                location_desc += "Coastal region" if is_coastal else "Inland region"
+
+                st.write(f"**Location**: {location_desc}")
 
                 # Provide context
-                if price_per_sqft < 100:
-                    st.info("💡 This property appears to be very affordable for its size.")
-                elif price_per_sqft > 200:
-                    st.info("💡 This property is in a premium price range.")
+                if predicted_price < 100000:
+                    st.info("💡 This district has below-average housing prices for California.")
+                elif predicted_price > 400000:
+                    st.info("💡 This district has premium housing prices, likely in a desirable area.")
                 else:
-                    st.info("💡 This property is priced in the moderate range.")
+                    st.info("💡 This district has moderate housing prices for California.")
 
                 # Show input summary
                 with st.expander("Input Summary"):
