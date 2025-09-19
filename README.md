@@ -14,7 +14,7 @@ This project uses the California Housing dataset from scikit-learn - a standard 
 
 The main goal here was getting comfortable with Docker and Streamlit, not building the most accurate housing price model. I simplified the ML pipeline to just use Linear and Ridge regression instead of more complex models like Random Forest or XGBoost. This cuts the Docker build time way down (from over 30 minutes to about 6 minutes) and still demonstrates all the core concepts.
 
-Basically, this is more about showing I can build a complete ML application that actually works - with proper testing, containerization, and CI/CD - using a straightforward dataset that everyone knows.
+Basically, this is more about showing I can build a complete ML application that actually works, with some testing, containerization, and CI/CD, using a straightforward dataset.
 
 ## 🚀 Quick Start
 
@@ -43,4 +43,5 @@ python src/data_processing.py
 python src/model_training.py
 streamlit run app/streamlit_app.py
 ```
+
 
