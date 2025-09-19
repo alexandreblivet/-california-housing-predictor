@@ -9,10 +9,30 @@
 A complete machine learning project that predicts California housing prices using the classic California housing dataset. Features a Streamlit web application and full Docker containerization.
 
 
-##  Quick Start
+## 🚀 Quick Start
 
 ### Run with Docker (Recommended)
 ```bash
-docker run -p 8501:8501 alexandreblivet/california-housing-predictor:latest
-# Access at http://localhost:8501 
+# Clone the repository
+git clone https://github.com/alexandreblivet/-california-housing-predictor.git
+cd california-housing-predictor
+
+# Build and run with Docker
+docker build -t california-housing-predictor .
+docker run -p 8501:8501 california-housing-predictor
+
+# Access at http://localhost:8501
+```
+
+### Local Development
+```bash
+# Clone the repository
+git clone https://github.com/alexandreblivet/-california-housing-predictor.git
+cd california-housing-predictor
+
+# Set up environment
+pip install -r requirements.txt
+python src/data_processing.py
+python src/model_training.py
+streamlit run app/streamlit_app.py
 ```
