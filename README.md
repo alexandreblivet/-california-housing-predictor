@@ -8,6 +8,13 @@
 
 A complete machine learning project that predicts California housing prices using the classic California housing dataset. Features a Streamlit web application and full Docker containerization.
 
+## Project Notes
+
+This project uses the California Housing dataset from scikit-learn - a standard dataset that's commonly used for regression tutorials and examples. I chose it because it's reliable and well-documented, which meant I could focus on the containerization and web app parts rather than dealing with messy data.
+
+The main goal here was getting comfortable with Docker and Streamlit, not building the most accurate housing price model. I simplified the ML pipeline to just use Linear and Ridge regression instead of more complex models like Random Forest or XGBoost. This cuts the Docker build time way down (from over 30 minutes to about 6 minutes) and still demonstrates all the core concepts.
+
+Basically, this is more about showing I can build a complete ML application that actually works - with proper testing, containerization, and CI/CD - using a straightforward dataset that everyone knows.
 
 ## 🚀 Quick Start
 
@@ -36,3 +43,4 @@ python src/data_processing.py
 python src/model_training.py
 streamlit run app/streamlit_app.py
 ```
+
