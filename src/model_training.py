@@ -41,22 +41,6 @@ class CaliforniaHousingPredictor:
                 'params': {
                     'alpha': [0.1, 1.0, 10.0, 100.0]
                 }
-            },
-            'Random Forest': {
-                'model': RandomForestRegressor(random_state=42),
-                'params': {
-                    'n_estimators': [50, 100, 200],
-                    'max_depth': [10, 20, None],
-                    'min_samples_split': [2, 5, 10]
-                }
-            },
-            'Gradient Boosting': {
-                'model': GradientBoostingRegressor(random_state=42),
-                'params': {
-                    'n_estimators': [50, 100, 200],
-                    'learning_rate': [0.05, 0.1, 0.2],
-                    'max_depth': [3, 5, 7]
-                }
             }
         }
 
